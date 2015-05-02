@@ -3,7 +3,7 @@
 void arch_x86_gdt_init();
 void log_printKernelVersion();
 
-void early_kernel_main() {
+extern "C" void early_kernel_main() {
 	log_printKernelVersion();
 	
 	printk(LOG_NOTICE,"========== Started Kernel Arch Init ==========\n");

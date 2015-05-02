@@ -39,8 +39,8 @@ void *memset(void *dest,int val,size_t n) {
 void memmove(void *dest, const void *src, size_t n)
 {
 	size_t i;
-	unsigned char *a = dest;
-	const unsigned char *b = src;
+	unsigned char *a = (unsigned char*)dest;
+	const unsigned char *b = (const unsigned char*)src;
 
 	if(src < dest)
 	{
