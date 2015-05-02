@@ -8,6 +8,9 @@ const signed int kernel_log_severityMask = -1; // -1 = nomask
 const signed int kernel_log_defaultSeverity = LOG_INFO;
 signed int kernel_log_lastMask;
 int getBits();
+
+
+
 char* itoh(int i, char *buf) {
 	int		n;
 	int		b;
@@ -49,30 +52,30 @@ void printk(const signed int severity, const char *fmt, ...) {
 
 	for(p = fmt; *p != '\0'; p++) {
 		if(*p != '%') {
-			text_console_printc(*p);
+			TextConsole::Printc(*p);
 			continue;
 		}
 		switch(*++p) {
 			case 'c':
 				i = va_arg(argp, int);
-				text_console_printc(i);
+				TextConsole::Printc(i);
 				break;
 			case 's':
 				s = va_arg(argp, char *);
-				text_console_print((char*)s);
+				TextConsole::Print((char*)s);
 				break;
 			case 'x':
 			case 'X':
 				i = va_arg(argp, int);
 				s = itoh(i, fmtbuf);
-				text_console_print((char*)s);
+				TextConsole::Print((char*)s);
 				break;
 			case '%':
-				text_console_printc('%');
+				TextConsole::Printc('%');
 				break;
 		}
 	}
 	va_end(argp);
 	//TODO: Remove this later, after we got an interrupt system working.
-	text_console_fb_flush();
+	TextConsole::UpdateFramebuffer();
 }

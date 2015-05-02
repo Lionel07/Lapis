@@ -9,10 +9,10 @@ AS		:= nasm -felf32# NASM or YASM is required for x86
 GAS		:= as
 CC		:= gcc
 CPP		:= g++
-CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -Os -s
-CPFLAGS := -ffreestanding -nostartfiles -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -Os -s
-LD		:= ${CC}
-LD_FLAGS:= -ffreestanding -O2 -nostdlib -lgcc -s
+CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -O2 -g
+CPFLAGS := -ffreestanding -std=c++11 -nostartfiles -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -O2 -g
+LD		:= ${CPP}
+LD_FLAGS:= -ffreestanding -O2 -nostdlib -lgcc -g -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
 
 GENISO 	:= genisoimage
 GENISOF	:= -R -b boot/grub/stage2_eltorito -quiet -no-emul-boot -boot-load-size 4 -boot-info-table
@@ -21,14 +21,14 @@ GENISOF	:= -R -b boot/grub/stage2_eltorito -quiet -no-emul-boot -boot-load-size 
 LD_LINKER_SCRIPT := arch/${ARCH}/${BOARD}/link.ld
 #----------------------------------------------------------
 # All Source Files
-FILES_KERNEL	:= $(patsubst %.c,%.o,$(wildcard kernel/*.c)) $(patsubst %.cpp,%.o,$(wildcard kernel/*.cpp))
-FILES_INIT  	:= $(patsubst %.c,%.o,$(wildcard init/*.c)) $(patsubst %.cpp,%.o,$(wildcard init/*.cpp))
-FILES_LIB   	:= $(patsubst %.c,%.o,$(wildcard lib/*.c)) $(patsubst %.cpp,%.o,$(wildcard lib/*.cpp))
-FILES_LOG   	:= $(patsubst %.c,%.o,$(wildcard log/*.c)) $(patsubst %.cpp,%.o,$(wildcard log/*.cpp))
-FILES_DRIVERS	:= $(patsubst %.c,%.o,$(wildcard drivers/*.c)) $(patsubst %.cpp,%.o,$(wildcard drivers/*.cpp))
+FILES_KERNEL	:= $(patsubst %.cpp,%.o,$(wildcard kernel/*.cpp))
+FILES_INIT  	:= $(patsubst %.cpp,%.o,$(wildcard init/*.cpp))
+FILES_LIB   	:= $(patsubst %.cpp,%.o,$(wildcard lib/*.cpp))
+FILES_LOG   	:= $(patsubst %.cpp,%.o,$(wildcard log/*.cpp))
+FILES_DRIVERS	:= $(patsubst %.cpp,%.o,$(wildcard drivers/*.cpp))
 
-FILES_ARCH  	:= $(patsubst %.c,%.o,$(wildcard arch/${ARCH}/*.c)) $(patsubst %.c,%.o,$(wildcard arch/${ARCH}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/*.s))
-FILES_BOARD 	:= $(patsubst %.c,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.c)) $(patsubst %.cpp,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.s))
+FILES_ARCH  	:= $(patsubst %.c,%.o,$(wildcard arch/${ARCH}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/*.s))
+FILES_BOARD 	:= $(patsubst %.cpp,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.s))
 
 FILES_CRTI 		:=arch/${ARCH}/${BOARD}/crti.o
 FILES_CRTBEGIN	:=$(shell $(CC) $(CFLAGS) -print-file-name=crtbegin.o)
@@ -45,11 +45,11 @@ FILES_COMPILE	:= ${FILES_ALL}
 
 %.o: %.c
 	@echo "CC  " $@
-	@${CC} -c ${CFLAGS} -Iincludes/  -o $@ $<
+	@${CC} -c ${CFLAGS} -I includes  -o $@ $<
 
 %.o: %.cpp
 	@echo "CPP " $@
-	@${CPP} -c ${CPFLAGS} -Iincludes/  -o $@ $<
+	@${CPP} -c ${CPFLAGS} -I includes  -o $@ $<
 
 arch/${ARCH}/${BOARD}/crti.o: arch/${ARCH}/${BOARD}/crti.s
 	@echo "GAS " $@
@@ -63,7 +63,7 @@ all: lapis
 
 lapis: ${FILES_COMPILE}
 	@echo "Building Lapis..."
-	@${LD} -T ${LD_LINKER_SCRIPT} -o ${KERNEL_OUTPUT} ${LD_FLAGS} ${FILES_COMPILE}
+	@${LD} -T ${LD_LINKER_SCRIPT} -Iincludes/ -o ${KERNEL_OUTPUT} ${LD_FLAGS} ${FILES_COMPILE}
 	@echo "Done"
 clean:
 	-@find . -name "*.o" -type f -delete

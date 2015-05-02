@@ -42,8 +42,8 @@ void text_console_scroll(int from,int to) { //TODO: Either depreciate, or conver
 	}
 }
 */
-void text_console_fb_shim_flush(uint8_t *flush,uint32_t scroll_y) {
-	memcpy((void*)textmode_buffer,(void*)flush+((X86_CONSOLE_WIDTH*2)*scroll_y),X86_CONSOLE_WIDTH*X86_CONSOLE_HEIGHT*2);
+void TextConsole_Shim_Flush(uint8_t *flush,uint32_t scroll_y) {
+	memcpy((uint8_t*)textmode_buffer,(uint8_t*)flush+((X86_CONSOLE_WIDTH*2)*scroll_y),X86_CONSOLE_WIDTH*X86_CONSOLE_HEIGHT*2);
 }
 
 uint8_t text_console_fb_shim_x86_addattribute() {

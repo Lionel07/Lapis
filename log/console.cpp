@@ -5,17 +5,20 @@
 //#include <stdio.h>
 //#include <string.h>
 
-#define CONFIG_TEXTCONSOLE_FB_MX 80
-#define CONFIG_TEXTCONSOLE_FB_MY 25
-#define CONFIG_TEXTCONSOLE_FB_SCREENS 4
-
-volatile uint8_t term_x = 0;
-volatile uint8_t term_y = 0;
-uint32_t scroll_y = 0;
-int term_fb_flag_modified = 0;
 uint8_t text_console_fb[CONFIG_TEXTCONSOLE_FB_MX * CONFIG_TEXTCONSOLE_FB_MY * CONFIG_TEXTCONSOLE_FB_SCREENS * 2]; // Stores attribute byte as well on x86.
+volatile uint8_t term_x;
+volatile uint8_t term_y;
+uint32_t scroll_y;
 
-void text_console_printc(char c) {
+int term_fb_flag_modified = 0;
+
+void TextConsole::Init() {
+	term_x = 0;
+	term_y = 0;
+	scroll_y = 0;
+}
+
+void TextConsole::Printc(char c) {
 	switch(c) {
 		case 0x08:
 			if(term_x) {
@@ -34,7 +37,7 @@ void text_console_printc(char c) {
 			term_y++;
 			break;
 		default:
-			text_console_fbAddChar(c,term_x,term_y);
+			FramebufferAddChar(c,term_x,term_y);
 			term_x++;
 			break;		
 	}
@@ -44,39 +47,37 @@ void text_console_printc(char c) {
 		term_y++;
 	}
 	// Scroll the screen if needed.
-	text_console_scroll();
+	UpdateScroll();
 	// Move the hardware cursor.
 	//text_console_shim_setCursor(term_x, term_y);
 }
 
-void text_console_print(const char *c) {
+void TextConsole::Print(const char *c) {
 	int i = 0;
 	while (c[i]) {
-		text_console_printc(c[i++]);
+		Printc(c[i++]);
 	}
-	text_console_fb_flush();
+	FramebufferFlush();
 }
 
-
-
-void text_console_init() {
-
+void TextConsole::UpdateFramebuffer() {
+	FramebufferFlush();
 }
 
-void text_console_fbAddChar(char c, uint8_t x, uint8_t y) {
+void TextConsole::FramebufferAddChar(char c, uint8_t x, uint8_t y) {
 	text_console_fb[((y * CONFIG_TEXTCONSOLE_FB_MX) + x) * 2] = c; // Multiply by 2 so you can add attribute byte.
 	text_console_fb[(((y * CONFIG_TEXTCONSOLE_FB_MX) + x) * 2) + 1] = 0x0F;
 	term_fb_flag_modified = 1;
 }
 
-void text_console_fb_flush() {
+void TextConsole::FramebufferFlush() {
 	if(term_fb_flag_modified == 1) {
-		text_console_fb_shim_flush((uint8_t*)&text_console_fb,scroll_y);
+		TextConsole_Shim_Flush((uint8_t*)&text_console_fb,scroll_y);
 		term_fb_flag_modified = 0;
 	}
 }
 
-void text_console_scroll() {
+void TextConsole::UpdateScroll() {
 	if(CONFIG_TEXTCONSOLE_FB_MY + scroll_y < term_y){
 		scroll_y++;
 	}

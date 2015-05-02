@@ -34,5 +34,5 @@ struct idt_ptr
     unsigned int base;
 } __attribute__((packed));
 
-extern void gdt_flush(uint32_t gdt_ptr);
+extern "C" void gdt_flush(uint32_t gdt_ptr);
 #endif
