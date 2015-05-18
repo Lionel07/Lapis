@@ -2,32 +2,11 @@
 #include <stdarg.h>
 #include <log/printk.h>
 
-const char *itoh_map = "0123456789ABCDEF";
-
 const signed int kernel_log_severityMask = -1; // -1 = nomask
 const signed int kernel_log_defaultSeverity = LOG_INFO;
 signed int kernel_log_lastMask;
-int getBits();
 
-
-
-char* itoh(int i, char *buf) {
-	int		n;
-	int		b;
-	int		z;
-	int		s;
-	
-	s = getBits() / 4;
-	
-	for (z = 0, n = (s - 1); n > -1; --n)
-	{
-		b = (i >> (n * 4)) & 0xf;
-		buf[z] = itoh_map[b];
-		++z;
-	}
-	buf[z] = 0;
-	return buf;
-}
+char* itoh(int i, char *buf);
 
 void printk(const signed int severity, const char *fmt, ...) {
 	if(severity < kernel_log_severityMask) {

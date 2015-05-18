@@ -82,6 +82,7 @@ char *strdup (char *s) {
     strcpy (d,s);                        // Copy the characters
     return d;                            // Return the new string
     **/
+	s = s;
     return NULL;
 }
 char * strtok_r(char * str, const char * delim, char ** saveptr)

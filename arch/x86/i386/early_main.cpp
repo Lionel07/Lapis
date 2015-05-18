@@ -1,15 +1,17 @@
 #include <log/printk.h>
+#include <log/console.h>
 #include <version.h>
-void arch_x86_gdt_init();
-void log_printKernelVersion();
 
+#include <arch/x86/gdt.h>
+void kmain();
 extern "C" void early_kernel_main() {
+	TextConsole::Init();
 	Kernel::Version::printKernelVersion();
 	
 	printk(LOG_NOTICE,"========== Started Kernel Arch Init ==========\n");
 	//Start to initialise the hardware
-	arch_x86_gdt_init(); 
-
-	printk(LOG_INFO,"Finished with x86 specific initialization - Moving onto core.\n");
+	ArchX86::GDT::Init(); 
+	
 	printk(LOG_NOTICE,"========== Finished Kernel Arch Init =========\n");
+	kmain();
 }		

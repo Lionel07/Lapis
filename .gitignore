@@ -1,20 +1,33 @@
-# Build Files
-*.o
-*.ko
-*.elf
-
-*.gch
-*.pch
-
-*.lib
-*.a
-*.la
+# Compiled Object files
+*.slo
 *.lo
-
-*.dll
+*.o
+*~
+# Compiled Dynamic libraries
 *.so
-*.so.*
 *.dylib
 
-lapis.*
-lapis*
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+*.elf
+*.aout
+.DS_Store
+
+*.iso
+*.img
+*.bin
+*.mod
+*.map
+
+*.log
+
+lapis
+
+.cproject
+.project
+.settings/
+
+temp/

@@ -9,10 +9,10 @@ AS		:= nasm -felf32# NASM or YASM is required for x86
 GAS		:= as
 CC		:= gcc
 CPP		:= g++
-CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -O2 -g
-CPFLAGS := -ffreestanding -std=c++11 -nostartfiles -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -O2 -g
+CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -O2 -g
+CPFLAGS := -ffreestanding -nostartfiles -Wall -Wextra -O2 -g
 LD		:= ${CPP}
-LD_FLAGS:= -ffreestanding -O2 -nostdlib -lgcc -g -Wall -Wextra -Wno-unused-function -Wno-unused-parameter
+LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -O2 -g
 
 GENISO 	:= genisoimage
 GENISOF	:= -R -b boot/grub/stage2_eltorito -quiet -no-emul-boot -boot-load-size 4 -boot-info-table
@@ -39,6 +39,8 @@ FILES_ALL		:= ${FILES_INIT} ${FILES_DRIVERS} ${FILES_KERNEL} ${FILES_LIB} ${FILE
 FILES_COMPILE	:= ${FILES_ALL}
 #==========================================================
 
+all: lapis
+
 %.o: %.s
 	@echo "AS  " $@
 	@${AS} -o $@ $<
@@ -58,15 +60,15 @@ arch/${ARCH}/${BOARD}/crtn.o: arch/${ARCH}/${BOARD}/crtn.s
 	@echo "GAS " $@
 	@${GAS} -o $@ $<
 
-
-all: lapis
-
 lapis: ${FILES_COMPILE}
 	@echo "Building Lapis..."
 	@${LD} -T ${LD_LINKER_SCRIPT} -Iincludes/ -o ${KERNEL_OUTPUT} ${LD_FLAGS} ${FILES_COMPILE}
 	@echo "Done"
 clean:
 	-@find . -name "*.o" -type f -delete
+	-@find . -name "lapis*" -type f -delete
+	-@find . -name "*.iso" -type f -delete
+	
 
 geniso:
 	@cp ${KERNEL_OUTPUT} media/iso/lapis
