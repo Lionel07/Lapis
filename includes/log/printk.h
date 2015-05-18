@@ -12,6 +12,7 @@
 #define LOG_DEBUG 3
 #define LOG_DEFAULT 0
 #define LOG_CONT -1
+#define LOG_TAG -2
 
 void printk(const signed int severity, const char *fmt, ...);
 

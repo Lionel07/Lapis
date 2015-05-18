@@ -1,16 +1,20 @@
 #include <log/console.h>
 #include <stdarg.h>
+#include <string.h>
 #include <log/printk.h>
 
 const signed int kernel_log_severityMask = -1; // -1 = nomask
 const signed int kernel_log_defaultSeverity = LOG_INFO;
 signed int kernel_log_lastMask;
 
+extern volatile uint8_t term_x;
+extern volatile uint8_t term_y;
+
 char* itoh(int i, char *buf);
 
 void printk(const signed int severity, const char *fmt, ...) {
 	if(severity < kernel_log_severityMask) {
-		if (severity == LOG_CONT) {
+		if (severity == LOG_CONT || severity == LOG_TAG) {
 			if(kernel_log_lastMask < kernel_log_severityMask) {
 				return;
 			}
@@ -27,8 +31,20 @@ void printk(const signed int severity, const char *fmt, ...) {
 	char 		*s;
 	char 		fmtbuf[256];
 
-	va_start(argp, fmt);
 
+	if (severity == LOG_TAG) {
+		size_t len = strlen(fmt);
+		TextConsole::FramebufferAddChar('[',78-len,term_y);
+		for(size_t i = 0; i < len; i++) {
+			TextConsole::FramebufferAddChar(fmt[i],(79-len) + i,term_y);
+		}
+		TextConsole::FramebufferAddChar(']',79,term_y);
+		term_y++;
+		term_x = 0;
+		return;
+	}
+
+	va_start(argp, fmt);
 	for(p = fmt; *p != '\0'; p++) {
 		if(*p != '%') {
 			TextConsole::Printc(*p);

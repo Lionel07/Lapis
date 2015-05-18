@@ -17,7 +17,7 @@ class TextConsole {
 		static void UpdateFramebuffer();
 		static void SetColor(uint8_t color);
 		static void ResetColor(uint8_t color);
-	private:
+		
 		static void FramebufferAddChar(char c, uint8_t x, uint8_t y);
 		static void FramebufferFlush();
 };
