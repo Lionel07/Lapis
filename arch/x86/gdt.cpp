@@ -30,5 +30,5 @@ void ArchX86::GDT::Init() {
 	ArchX86::GDT::SetGate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User mode code segment
 	ArchX86::GDT::SetGate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User mode data segment
 	gdt_flush((uint32_t)&arch_x86_gdtptr);
-	printk(LOG_CONT,"Done\n");
+	printk(LOG_TAG,"Done");
 }
