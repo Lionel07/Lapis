@@ -34,10 +34,14 @@ void printk(const signed int severity, const char *fmt, ...) {
 
 	if (severity == LOG_TAG) {
 		size_t len = strlen(fmt);
-		TextConsole::FramebufferAddChar('[',78-len,term_y);
+		uint8_t attribute = 0x0A;
+		TextConsole::FramebufferAddChar('[',76-len,term_y);
 		for(size_t i = 0; i < len; i++) {
-			TextConsole::FramebufferAddChar(fmt[i],(79-len) + i,term_y);
+			TextConsole::FramebufferAddChar(fmt[i],(78-len) + i,term_y);
+			
+			TextConsole::FramebufferAddCharAttrib(attribute ,(78-len) + i,term_y);
 		}
+		TextConsole::FramebufferAddChar(' ',78,term_y);
 		TextConsole::FramebufferAddChar(']',79,term_y);
 		term_y++;
 		term_x = 0;

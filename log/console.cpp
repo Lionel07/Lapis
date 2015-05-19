@@ -70,6 +70,11 @@ void TextConsole::FramebufferAddChar(char c, uint8_t x, uint8_t y) {
 	term_fb_flag_modified = 1;
 }
 
+void TextConsole::FramebufferAddCharAttrib(uint8_t c, uint8_t x, uint8_t y) {
+	text_console_fb[(((y * CONFIG_TEXTCONSOLE_FB_MX) + x) * 2) + 1] = c;
+	term_fb_flag_modified = 1;
+}
+
 void TextConsole::FramebufferFlush() {
 	if(term_fb_flag_modified == 1) {
 		TextConsole_Shim_Flush((uint8_t*)&text_console_fb,scroll_y);
