@@ -54,19 +54,25 @@ extern "C" void fault_handler(struct regs *r)
 		interrupt_handlers[r->int_no] (r);
 		return;
 	} else {
-			printk(LOG_CRIT,"fault: code     | %d (error %d),(%s)\n",r->int_no,r->err_code,exception_messages[r->int_no]);
-			printk(LOG_CRIT,"fault: segment  | gs:0x%x fs:0x%x es:0x%x ds:0x%x cs:0x%x ss:0x%x\n",r->gs,r->fs,r->es,r->ds,r->cs,r->ss);
-			printk(LOG_CRIT,"fault: stack    | esp: 0x%x ebp: 0x%x uesp: 0x%x\n",r->useless_value,r->ebp,r->useresp);
-			printk(LOG_CRIT,"fault: gp regs  | eax: 0x%x ebx: 0x%x ecx: 0x%x edx: 0x%x\n",r->eax,r->ebx,r->ecx,r->edx);
-			printk(LOG_CRIT,"fault: .......  | esi: 0x%x edi: 0x%x eip: 0x%x eflags: 0x%x \n",r->esi,r->edi,r->eip,r->eflags);
+			//																|
+			printk(LOG_CRIT,"========= Started Kernel Fault Handler ======="); printk(LOG_TAG,"Fault");
+			printk(LOG_CRIT,"type:%d (error %d),(%s)\n",r->int_no,r->err_code,exception_messages[r->int_no]);
+			printk(LOG_CRIT,"gs:  0x%x fs:0x%x es:0x%x\nds:  0x%x cs:0x%x ss:0x%x\n",r->gs,r->fs,r->es,r->ds,r->cs,r->ss);
+			printk(LOG_CRIT,"esp: 0x%x ebp: 0x%x uesp: 0x%x\n",r->useless_value,r->ebp,r->useresp);
+			printk(LOG_CRIT,"eax: 0x%x ebx: 0x%x ecx: 0x%x edx: 0x%x\n",r->eax,r->ebx,r->ecx,r->edx);
+			printk(LOG_CRIT,"esi: 0x%x edi: 0x%x eip: 0x%x eflags: 0x%x \n",r->esi,r->edi,r->eip,r->eflags);
+			printk(LOG_CRIT,"========== Ended Kernel Fault Handler ========\n");
+			return;
 	}
 	if(r->int_no < 32)
 	{
-		printk(LOG_CRIT,"fault: code     | %d (error %d),(%s)\n",r->int_no,r->err_code,exception_messages[r->int_no]);
-		printk(LOG_CRIT,"fault: segment  | gs:0x%x fs:0x%x es:0x%x ds:0x%x cs:0x%x ss:0x%x\n",r->gs,r->fs,r->es,r->ds,r->cs,r->ss);
-		printk(LOG_CRIT,"fault: stack    | esp: 0x%x ebp: 0x%x uesp: 0x%x\n",r->useless_value,r->ebp,r->useresp);
-		printk(LOG_CRIT,"fault: gp regs  | eax: 0x%x ebx: 0x%x ecx: 0x%x edx: 0x%x\n",r->eax,r->ebx,r->ecx,r->edx);
-		printk(LOG_CRIT,"fault: .......  | esi: 0x%x edi: 0x%x eip: 0x%x eflags: 0x%x \n",r->esi,r->edi,r->eip,r->eflags);
+		printk(LOG_CRIT,"========= Started Kernel Fault Handler ======="); printk(LOG_TAG,"Fault");
+		printk(LOG_CRIT,"type:%d (error %d),(%s)\n",r->int_no,r->err_code,exception_messages[r->int_no]);
+		printk(LOG_CRIT,"gs:  0x%x fs:0x%x es:0x%x\nds:  0x%x cs:0x%x ss:0x%x\n",r->gs,r->fs,r->es,r->ds,r->cs,r->ss);
+		printk(LOG_CRIT,"esp: 0x%x ebp:0x%x uesp:0x%x\n",r->useless_value,r->ebp,r->useresp);
+		printk(LOG_CRIT,"eax: 0x%x ebx:0x%x ecx:0x%x edx:0x%x\n",r->eax,r->ebx,r->ecx,r->edx);
+		printk(LOG_CRIT,"esi: 0x%x edi:0x%x eip:0x%x eflags:0x%x\n",r->esi,r->edi,r->eip,r->eflags);
+		printk(LOG_CRIT,"========== Ended Kernel Fault Handler ========\n");
 	}
 }
 

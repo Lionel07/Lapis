@@ -27,13 +27,8 @@ FILES_LIB   	:= $(patsubst %.cpp,%.o,$(wildcard lib/*.cpp))
 FILES_LOG   	:= $(patsubst %.cpp,%.o,$(wildcard log/*.cpp))
 FILES_DRIVERS	:= $(patsubst %.cpp,%.o,$(wildcard drivers/*.cpp))
 
-FILES_ARCH  	:= $(patsubst %.c,%.o,$(wildcard arch/${ARCH}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/*.s))
+FILES_ARCH  	:= $(patsubst %.cpp,%.o,$(wildcard arch/${ARCH}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/*.s))
 FILES_BOARD 	:= $(patsubst %.cpp,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.s))
-
-FILES_CRTI 		:=arch/${ARCH}/${BOARD}/crti.o
-FILES_CRTBEGIN	:=$(shell $(CC) $(CFLAGS) -print-file-name=crtbegin.o)
-FILES_CRTEND	:=$(shell $(CC) $(CFLAGS) -print-file-name=crtend.o)
-FILES_CRTN 		:=arch/${ARCH}/${BOARD}/crtn.o
 
 FILES_ALL		:= ${FILES_INIT} ${FILES_DRIVERS} ${FILES_KERNEL} ${FILES_LIB} ${FILES_LOG} ${FILES_ARCH} ${FILES_BOARD} 
 FILES_COMPILE	:= ${FILES_ALL}
@@ -53,12 +48,6 @@ all: lapis
 	@echo "CPP " $@
 	@${CPP} -c ${CPFLAGS} -I includes  -o $@ $<
 
-arch/${ARCH}/${BOARD}/crti.o: arch/${ARCH}/${BOARD}/crti.s
-	@echo "GAS " $@
-	@${GAS} -o $@ $<
-arch/${ARCH}/${BOARD}/crtn.o: arch/${ARCH}/${BOARD}/crtn.s
-	@echo "GAS " $@
-	@${GAS} -o $@ $<
 
 lapis: ${FILES_COMPILE}
 	@echo "Building Lapis..."

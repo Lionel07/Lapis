@@ -11,6 +11,7 @@ extern volatile uint8_t term_x;
 extern volatile uint8_t term_y;
 
 char* itoh(int i, char *buf);
+int itoa(int value, char *sp, int radix);
 
 void printk(const signed int severity, const char *fmt, ...) {
 	if(severity < kernel_log_severityMask) {
@@ -35,6 +36,9 @@ void printk(const signed int severity, const char *fmt, ...) {
 	if (severity == LOG_TAG) {
 		size_t len = strlen(fmt);
 		uint8_t attribute = 0x0A;
+		if ((strcmp(fmt, "Fail") == 0) || strcmp(fmt, "Fault") == 0) {
+			attribute = 0x0C;
+		}
 		TextConsole::FramebufferAddChar('[',76-len,term_y);
 		for(size_t i = 0; i < len; i++) {
 			TextConsole::FramebufferAddChar(fmt[i],(78-len) + i,term_y);
@@ -68,6 +72,11 @@ void printk(const signed int severity, const char *fmt, ...) {
 				i = va_arg(argp, int);
 				s = itoh(i, fmtbuf);
 				TextConsole::Print((char*)s);
+				break;
+			case 'd':
+				i = va_arg(argp, int);
+				itoa(i, fmtbuf, 10);
+				TextConsole::Print((char*)fmtbuf);
 				break;
 			case '%':
 				TextConsole::Printc('%');
