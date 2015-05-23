@@ -14,6 +14,5 @@ extern "C" void early_kernel_main() {
 	ArchX86::GDT::Init(); 
 	ArchX86::IDT::Init();
 	printk(LOG_NOTICE,"========== Finished Kernel Arch Init =========\n");
-	asm("int $7");
-	//kmain();
+	kmain();
 }		

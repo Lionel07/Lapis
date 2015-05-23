@@ -75,7 +75,7 @@ void printk(const signed int severity, const char *fmt, ...) {
 				break;
 			case 'd':
 				i = va_arg(argp, int);
-				itoa(i, fmtbuf, 10);
+				itoa((int)i, fmtbuf, 10);
 				TextConsole::Print((char*)fmtbuf);
 				break;
 			case '%':
