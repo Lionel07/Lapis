@@ -54,7 +54,6 @@ extern "C" void fault_handler(struct regs *r)
 		interrupt_handlers[r->int_no] (r);
 		return;
 	} else {
-			//																|
 			printk(LOG_CRIT,"========= Started Kernel Fault Handler ======="); printk(LOG_TAG,"Fault");
 			printk(LOG_CRIT,"type:%d (error %d),(%s)\n",r->int_no,r->err_code,exception_messages[r->int_no]);
 			printk(LOG_CRIT,"gs:  0x%x fs:0x%x es:0x%x\nds:  0x%x cs:0x%x ss:0x%x\n",r->gs,r->fs,r->es,r->ds,r->cs,r->ss);
@@ -90,8 +89,9 @@ void deregister_interrupt_handler (uint8_t n)
 
 extern "C" void irq_handler(struct regs *r)
 {
-	/* This is a blank function pointer */
+	/// TODO: Allow Kernel to handle these generally.
 	if (interrupt_handlers[r->int_no] != 0){
+		
 		interrupt_handlers[r->int_no] (r);
 	}
 	else {

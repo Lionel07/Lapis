@@ -54,8 +54,6 @@ void ArchX86::IDT::Init()
 	SetGate(29, (unsigned)isr29, 0x08, 0x8E);
 	SetGate(30, (unsigned)isr30, 0x08, 0x8E);
 	SetGate(31, (unsigned)isr31, 0x08, 0x8E);
-	//Syscall
-	//idt_set_gate(0x64, (unsigned)isr100, 0x08, 0x8E);
 
 	outb(0x20, 0x11);
 	outb(0xA0, 0x11);

@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <log/console.h>
+#include <log/printk.h>
 //#include <stdio.h>
 //#include <string.h>
 
@@ -16,6 +17,8 @@ void TextConsole::Init() {
 	term_x = 0;
 	term_y = 0;
 	scroll_y = 0;
+	printk(LOG_INFO,"console: Initialising text console"); printk(LOG_TAG,"Done");
+	
 }
 
 void TextConsole::Printc(char c) {
