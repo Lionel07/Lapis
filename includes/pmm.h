@@ -14,8 +14,8 @@ namespace Kernel {
 	public:
 		static void refreshCache();
 		static void init();
-		static int setPageUsed(uintptr_t * address);
-		static int setPageFree(uintptr_t * address);
+		static int allocate(int pages);
+		static int free(uintptr_t * address);
 	};
 }
 
