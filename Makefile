@@ -5,14 +5,15 @@ BOARD	:= i386
 KERNEL_OUTPUT 	:= lapis
 #----------------------------------------------------------
 # Tools
+DEBUGFG := -g
 AS		:= nasm -felf32# NASM or YASM is required for x86
 GAS		:= as
 CC		:= gcc
 CPP		:= g++
-CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -O2 -g
-CPFLAGS := -ffreestanding -nostartfiles -Wall -Wextra -O2 -g
+CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -Os ${DEBUGFG}
+CPFLAGS := -ffreestanding -nostartfiles -Wall -Wextra -Os ${DEBUGFG}
 LD		:= ${CPP}
-LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -O2 -g
+LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -Os ${DEBUGFG}
 
 GENISO 	:= genisoimage
 GENISOF	:= -R -b boot/grub/stage2_eltorito -quiet -no-emul-boot -boot-load-size 4 -boot-info-table
