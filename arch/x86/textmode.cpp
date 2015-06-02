@@ -9,7 +9,7 @@
 #define X86_CONSOLE_COLOR 0x0F
 
 volatile uint8_t *textmode_buffer=(uint8_t*)0xB8000;
-volatile uint16_t *textmode_buffer_16=(uint16_t*)0xB8000;
+//volatile uint16_t *textmode_buffer_16=(uint16_t*)0xB8000;
 volatile uint8_t textmode_color = 0x0F;
 
 void text_console_change_color(uint8_t color) {
