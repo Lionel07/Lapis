@@ -35,7 +35,7 @@ FILES_ALL		:= ${FILES_INIT} ${FILES_DRIVERS} ${FILES_KERNEL} ${FILES_LIB} ${FILE
 FILES_COMPILE	:= ${FILES_ALL}
 #==========================================================
 
-all: lapis
+all: lapis geniso
 
 %.o: %.s
 	@echo "AS  " $@
