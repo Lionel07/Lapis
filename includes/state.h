@@ -9,6 +9,7 @@ namespace Kernel {
 	class State {
 		public:
 			static int getState();
+			static int setState(int state);
 	};
 }
 #endif
