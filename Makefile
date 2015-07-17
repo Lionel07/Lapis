@@ -62,8 +62,10 @@ clean:
 	-@find . -name "lapis*" -type f -delete
 	-@find . -name "*.iso" -type f -delete
 
-clean-sysroot:
-	@-mkdir sysroot
+sysroot:
+	@-mkdir sysroot 2>/dev/null
+clean-sysroot: sysroot
+	
 	-@rm -r sysroot/*
 
 sysroot-base:
