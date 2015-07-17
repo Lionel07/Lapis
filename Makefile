@@ -5,6 +5,9 @@ BOARD	:= i386
 KERNEL_OUTPUT 	:= lapis
 #----------------------------------------------------------
 # Tools
+
+.PHONY: clean clean-sysroot
+
 DEBUGFG := -g
 AS		:= nasm -felf32# NASM or YASM is required for x86
 GAS		:= as
@@ -58,9 +61,16 @@ clean:
 	-@find . -name "*.o" -type f -delete
 	-@find . -name "lapis*" -type f -delete
 	-@find . -name "*.iso" -type f -delete
-	
 
-geniso:
-	@cp ${KERNEL_OUTPUT} media/iso/lapis
-	@${GENISO} ${GENISOF} -o cdrom.iso media/iso
-	@rm media/iso/lapis
+clean-sysroot:
+	@-mkdir sysroot
+	-@rm -r sysroot/*
+
+sysroot-base:
+	@cp -a media/base/. sysroot/
+
+geniso: clean-sysroot sysroot-base
+	@cp ${KERNEL_OUTPUT} sysroot/lapis
+	@cp -a media/iso/. sysroot/
+	@${GENISO} ${GENISOF} -o cdrom.iso sysroot
+

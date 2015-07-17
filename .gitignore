@@ -31,3 +31,5 @@ lapis
 .settings/
 
 temp/
+
+sysroot/*
