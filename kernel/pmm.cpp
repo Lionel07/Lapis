@@ -1,8 +1,6 @@
 #include <pmm.h>
 #include <log/printk.h>
 
-#define BUDDY_BITMAP_SIZE_MAGIC 12
-
 #define PMM_PRINTDEBUGSTATEMENTS true
 
 // TODO(Lionel07): A math.h
@@ -17,15 +15,15 @@ uintptr_t   Kernel::PMM::kernel_uncommitedAllocatedPages;
 void Kernel::PMM::init() {
     printk(LOG_INFO, "pmm: Initialsing Physical Memory Manager...\n");
 
-    memsize = 0xF000000;    // Get memsize here.
+    memsize = 0xF000000;    // TODO(Lionel07): Get memsize here.
     buddy_usedPages = 0;
 
     for (int i = 0; i != BUDDY_BITMAPS; i++) {
         if (PMM_PRINTDEBUGSTATEMENTS) {
             printk(LOG_INFO, "pmm: Creating buddy bitmap %d, resolution 0x%X, size 0x%X bytes\n", \
-             i, ipow(2, BUDDY_BITMAP_SIZE_MAGIC + i), memsize / ipow(2, BUDDY_BITMAP_SIZE_MAGIC + i));
+             i, ipow(2, BUDDY_STARTSIZE + i), memsize / ipow(2, BUDDY_STARTSIZE + i));
         }
-        int needed_size = memsize / ipow(2, BUDDY_BITMAP_SIZE_MAGIC + i);
+        int needed_size = memsize / ipow(2, BUDDY_STARTSIZE + i);
         if ((needed_size & 0xFFFFF000) != needed_size) {
             needed_size &= 0xFFFFF000;
             needed_size += 0x1000;
