@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define BUDDY_BITMAPS 5
+#define BUDDY_BITMAPS 2
 #define BUDDY_STARTSIZE 12
 
 namespace Kernel {
@@ -11,10 +11,9 @@ namespace Kernel {
     public:
         static uintptr_t memsize;
         static uintptr_t buddy_usedPages;
-        static uintptr_t * buddy_startPage;
+        static uintptr_t * buddy_startPage[BUDDY_BITMAPS];
         static uintptr_t kernel_allocatedPages;
         static uintptr_t kernel_uncommitedAllocatedPages;
-
     public:
         static void refreshCache();
         static void init();
