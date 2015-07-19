@@ -70,3 +70,20 @@ int Kernel::PMM::buddy_allocatePage(uintptr_t address) {
     }
     return 0;
 }
+int Kernel::PMM::buddy_freePage(uintptr_t address) {
+    // printk(LOG_DEBUG, "pmm buddy: Freeing page 0x%X\n", address);
+
+    uintptr_t frame_addr = address / 0x1000;
+    uintptr_t index = INDEX_FROM_BIT(frame_addr);
+    uintptr_t offset = OFFSET_FROM_BIT(frame_addr);
+
+    uintptr_t *bitmap = buddy_startPage[0];
+    bitmap[index] &= ~(0x1 << offset);
+    // Update higher bitmaps by setting the bits to ON
+    for (int i = 0; i!= BUDDY_BITMAPS; i++) {
+        break;  // TODO(Lionel07): Fix this.
+        if (bitmap[index] == (uintptr_t)-1) {
+        }
+    }
+    return 0;
+}

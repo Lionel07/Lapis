@@ -19,6 +19,7 @@ namespace Kernel {
         static void init();
         static int allocate(int pages);
         static int buddy_allocatePage(uintptr_t address);
+        static int buddy_freePage(uintptr_t address);
         static int free(uintptr_t * address);
     };
 };
