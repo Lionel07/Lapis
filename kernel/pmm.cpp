@@ -1,9 +1,10 @@
 #include <pmm.h>
 #include <log/printk.h>
 #include <string.h>
+#include <config.h>
 
 /// Should we print debug statements?
-#define PMM_PRINTDEBUGSTATEMENTS true
+
 /// Page index from address
 #define INDEX_FROM_BIT(b) (b / 0x20)
 /// Page offest from address
@@ -14,7 +15,7 @@ int ipow(int base, int exp);
 
 uintptr_t   Kernel::PMM::memsize;
 uintptr_t   Kernel::PMM::buddy_usedPages;
-uintptr_t * Kernel::PMM::buddy_startPage[BUDDY_BITMAPS];
+uintptr_t * Kernel::PMM::buddy_startPage[PMM_BUDDY_BITMAPS];
 uintptr_t   Kernel::PMM::kernel_allocatedPages;
 uintptr_t   Kernel::PMM::kernel_uncommitedAllocatedPages;
 
@@ -27,8 +28,8 @@ void Kernel::PMM::init() {
     uintptr_t start_of_allocatable_space = 0x1000000;
     uintptr_t * buddyAllocatorPointer = (uintptr_t*) start_of_allocatable_space;
 
-    for (int i = 0; i != BUDDY_BITMAPS; i++) {
-        int needed_size = memsize / ipow(2, BUDDY_STARTSIZE + i);
+    for (int i = 0; i != PMM_BUDDY_BITMAPS; i++) {
+        int needed_size = memsize / ipow(2, PMM_BUDDY_STARTSIZE + i);
         if ((needed_size & 0xFFFFF000) != needed_size) {
             needed_size &= 0xFFFFF000;
             needed_size += 0x1000;
@@ -42,8 +43,8 @@ void Kernel::PMM::init() {
 
         if (PMM_PRINTDEBUGSTATEMENTS) {
             printk(LOG_INFO, "pmm: Created bitmap %d, resolution 0x%X, size 0x%X bytes\n", \
-             i, ipow(2, BUDDY_STARTSIZE + i), needed_size);
-            printk(LOG_INFO, "pmm: @0x%X\n", (uintptr_t)buddy_startPage[i]);
+             i, ipow(2, PMM_BUDDY_STARTSIZE + i), needed_size);
+            //printk(LOG_INFO, "pmm: @0x%X\n", (uintptr_t)buddy_startPage[i]);
         }
     }
     printk(LOG_INFO, "pmm: Requires 0x%X pages for bookkeeping\n", buddy_usedPages);
@@ -53,7 +54,7 @@ void Kernel::PMM::init() {
         buddy_allocatePage(i);
     }
 }
-int Kernel::PMM::buddy_allocatePage(uintptr_t address) {
+uintptr_t Kernel::PMM::buddy_allocatePage(uintptr_t address) {
     // printk(LOG_DEBUG, "pmm buddy: Allocating page 0x%X\n", address);
 
     uintptr_t frame_addr = address / 0x1000;
@@ -63,7 +64,7 @@ int Kernel::PMM::buddy_allocatePage(uintptr_t address) {
     uintptr_t *bitmap = buddy_startPage[0];
     bitmap[index] |= (0x1 << offset);
     // Update higher bitmaps by setting the bits to ON
-    for (int i = 0; i!= BUDDY_BITMAPS; i++) {
+    for (int i = 0; i!= PMM_BUDDY_BITMAPS; i++) {
         break;  // TODO(Lionel07): Fix this.
         if (bitmap[index] == (uintptr_t)-1) {
         }

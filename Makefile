@@ -13,10 +13,10 @@ AS		:= nasm -felf32# NASM or YASM is required for x86
 GAS		:= as
 CC		:= gcc
 CPP		:= g++
-CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -Os ${DEBUGFG} -lgcc
-CPFLAGS := -ffreestanding -nostartfiles -fno-rtti -fno-exceptions -Wall -Wextra -Os ${DEBUGFG} -lgcc
+CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -O2 ${DEBUGFG} -lgcc
+CPFLAGS := -ffreestanding -nostartfiles -fno-rtti -fno-exceptions -Wall -Wextra -DBUILD_${ARCH} -O2 ${DEBUGFG} -lgcc
 LD		:= ${CPP}
-LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -Os ${DEBUGFG}
+LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -O2 ${DEBUGFG}
 
 GENISO 	:= genisoimage
 GENISOF	:= -R -b boot/grub/stage2_eltorito -quiet -no-emul-boot -boot-load-size 4 -boot-info-table

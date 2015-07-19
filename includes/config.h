@@ -1,0 +1,25 @@
+#ifndef KERNEL_CONFIG_H
+#define KERNEL_CONFIG_H
+
+#define USING_CONSOLE_FB
+#define USING_LOG_FANCYTAGS
+
+#define PMM_BUDDY_BITMAPS 2
+#define PMM_BUDDY_STARTSIZE 12
+
+#define PMM_PRINTDEBUGSTATEMENTS true
+
+#define NO_VERSION_WARNING
+
+// RULES
+
+#ifdef ARCHarm
+#undef USING_LOG_FANCYTAGS
+#undef USING_CONSOLE_FB
+#endif
+
+#ifdef ARCHx86
+
+#endif
+
+#endif
