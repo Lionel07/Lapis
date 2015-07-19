@@ -18,6 +18,7 @@ namespace Kernel {
         static void refreshCache();
         static void init();
         static int allocate(int pages);
+        static int buddy_allocatePage(uintptr_t address);
         static int free(uintptr_t * address);
     };
 };
