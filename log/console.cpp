@@ -6,7 +6,12 @@
 //#include <stdio.h>
 //#include <string.h>
 
+void TextConsole_Shim_WriteChar(uint8_t c,int x, int y);
+
+#undef USING_FB
+#ifdef USING_FB
 uint8_t text_console_fb[CONFIG_TEXTCONSOLE_FB_MX * CONFIG_TEXTCONSOLE_FB_MY * CONFIG_TEXTCONSOLE_FB_SCREENS * 2]; // Stores attribute byte as well on x86.
+#endif
 volatile uint8_t term_x;
 volatile uint8_t term_y;
 uint32_t scroll_y;
@@ -38,6 +43,10 @@ void TextConsole::Printc(char c) {
 			term_fb_flag_modified = 1;
 			term_x = 0;
 			term_y++;
+
+			#ifndef USING_FB
+			FramebufferAddChar('\n',term_x,term_y);
+			#endif
 			break;
 		default:
 			FramebufferAddChar(c,term_x,term_y);
@@ -68,24 +77,33 @@ void TextConsole::UpdateFramebuffer() {
 }
 
 void TextConsole::FramebufferAddChar(char c, uint8_t x, uint8_t y) {
+	#ifdef USING_FB
 	text_console_fb[((y * CONFIG_TEXTCONSOLE_FB_MX) + x) * 2] = c; // Multiply by 2 so you can add attribute byte.
 	text_console_fb[(((y * CONFIG_TEXTCONSOLE_FB_MX) + x) * 2) + 1] = 0x0F;
 	term_fb_flag_modified = 1;
+	#else
+	TextConsole_Shim_WriteChar(c,x,y);
+	#endif
 }
 
 void TextConsole::FramebufferAddCharAttrib(uint8_t c, uint8_t x, uint8_t y) {
+	#ifdef USING_FB
 	text_console_fb[(((y * CONFIG_TEXTCONSOLE_FB_MX) + x) * 2) + 1] = c;
 	term_fb_flag_modified = 1;
+	#endif
 }
 
 void TextConsole::FramebufferFlush() {
+	#ifdef USING_FB
 	if(term_fb_flag_modified == 1) {
 		TextConsole_Shim_Flush((uint8_t*)&text_console_fb,scroll_y);
 		term_fb_flag_modified = 0;
 	}
+	#endif
 }
 
 void TextConsole::UpdateScroll() {
+	#ifdef USING_FB
 	if(CONFIG_TEXTCONSOLE_FB_MY + scroll_y < term_y){
 		scroll_y++;
 	}
@@ -97,4 +115,5 @@ void TextConsole::UpdateScroll() {
 		scroll_y = 0;
 		term_y = 0;
 	}
+	#endif
 }
