@@ -13,6 +13,7 @@ namespace Kernel {
         static uintptr_t kernel_uncommitedAllocatedPages;
     public:
         static void        refreshCache();
+        static void        debugPrintStatistics();
         static void        init();
         static uintptr_t * allocate(unsigned int pages);
         static uintptr_t   buddy_allocatePage(uintptr_t address);

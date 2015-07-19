@@ -54,6 +54,12 @@ void Kernel::PMM::init() {
         buddy_allocatePage(i);
     }
 }
+
+void Kernel::PMM::debugPrintStatistics() {
+     printk(LOG_DEBUG, "pmm stat: memsize 0x%X, alloc. pages 0x%X, uncommited 0x%X\n", memsize,kernel_allocatedPages,kernel_uncommitedAllocatedPages);
+     printk(LOG_DEBUG, "pmm stat: buddy pages [0]0x%X, [1]0x%X, ..., total %d\n", buddy_startPage[0],buddy_startPage[1], PMM_BUDDY_BITMAPS);
+}
+
 uintptr_t Kernel::PMM::buddy_allocatePage(uintptr_t address) {
     // printk(LOG_DEBUG, "pmm buddy: Allocating page 0x%X\n", address);
 
@@ -69,5 +75,6 @@ uintptr_t Kernel::PMM::buddy_allocatePage(uintptr_t address) {
         if (bitmap[index] == (uintptr_t)-1) {
         }
     }
+    kernel_allocatedPages++;
     return 0;
 }
