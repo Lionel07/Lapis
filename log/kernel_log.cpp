@@ -34,6 +34,7 @@ void printk(const signed int severity, const char *fmt, ...) {
 
 
 	if (severity == LOG_TAG) {
+		#ifndef DRAW_SIMPLE_TAGS
 		size_t len = strlen(fmt);
 		uint8_t attribute = 0x0A;
 		if ((strcmp(fmt, "Fail") == 0) || strcmp(fmt, "Fault") == 0) {
@@ -49,6 +50,11 @@ void printk(const signed int severity, const char *fmt, ...) {
 		TextConsole::FramebufferAddChar(']',79,term_y);
 		term_y++;
 		term_x = 0;
+		#else
+		printk(kernel_log_lastMask," [");
+		printk(kernel_log_lastMask,fmt);
+		printk(kernel_log_lastMask,"]\n");
+		#endif
 		return;
 	}
 

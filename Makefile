@@ -8,13 +8,13 @@ KERNEL_OUTPUT 	:= lapis
 
 .PHONY: clean clean-sysroot
 
-DEBUGFG := -g
+DEBUGFG := -g -DDRAW_SIMPLE_TAGS
 AS		:= nasm -felf32# NASM or YASM is required for x86
 GAS		:= as
 CC		:= gcc
 CPP		:= g++
-CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -Os ${DEBUGFG}
-CPFLAGS := -ffreestanding -nostartfiles -Wall -Wextra -Os ${DEBUGFG}
+CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -Os ${DEBUGFG} -lgcc
+CPFLAGS := -ffreestanding -nostartfiles -fno-rtti -fno-exceptions -Wall -Wextra -Os ${DEBUGFG} -lgcc
 LD		:= ${CPP}
 LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -Os ${DEBUGFG}
 
@@ -55,7 +55,7 @@ all: lapis geniso
 
 lapis: ${FILES_COMPILE}
 	@echo "Building Lapis..."
-	@${LD} -T ${LD_LINKER_SCRIPT} -Iincludes/ -o ${KERNEL_OUTPUT} ${LD_FLAGS} ${FILES_COMPILE}
+	@${LD} -T ${LD_LINKER_SCRIPT} -Iincludes/ -o ${KERNEL_OUTPUT} ${LD_FLAGS} ${FILES_COMPILE} -lgcc
 	@echo "Done"
 clean:
 	-@find . -name "*.o" -type f -delete
@@ -74,5 +74,5 @@ sysroot-base:
 geniso: clean-sysroot sysroot-base
 	@cp ${KERNEL_OUTPUT} sysroot/lapis
 	@cp -a media/iso/. sysroot/
-	@${GENISO} ${GENISOF} -o cdrom.iso sysroot
+	-@${GENISO} ${GENISOF} -o cdrom.iso sysroot
 
