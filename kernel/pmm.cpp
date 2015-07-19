@@ -17,13 +17,14 @@ uintptr_t   Kernel::PMM::buddy_usedPages;
 uintptr_t * Kernel::PMM::buddy_startPage[BUDDY_BITMAPS];
 uintptr_t   Kernel::PMM::kernel_allocatedPages;
 uintptr_t   Kernel::PMM::kernel_uncommitedAllocatedPages;
+uintptr_t   Kernel::PMM::kernel_totalPages;
 
 void Kernel::PMM::init() {
     printk(LOG_INFO, "pmm: Initialsing Physical Memory Manager...\n");
 
     memsize = 0xF000000;    // TODO(Lionel07): Get memsize here.
     buddy_usedPages = 0;
-
+    kernel_totalPages = memsize / 4;
     uintptr_t start_of_allocatable_space = 0x1000000;
     uintptr_t * buddyAllocatorPointer = (uintptr_t*) start_of_allocatable_space;
 
@@ -53,7 +54,7 @@ void Kernel::PMM::init() {
         buddy_allocatePage(i);
     }
 }
-int Kernel::PMM::buddy_allocatePage(uintptr_t address) {
+uintptr_t Kernel::PMM::buddy_allocatePage(uintptr_t address) {
     // printk(LOG_DEBUG, "pmm buddy: Allocating page 0x%X\n", address);
 
     uintptr_t frame_addr = address / 0x1000;
@@ -70,7 +71,7 @@ int Kernel::PMM::buddy_allocatePage(uintptr_t address) {
     }
     return 0;
 }
-int Kernel::PMM::buddy_freePage(uintptr_t address) {
+uintptr_t Kernel::PMM::buddy_freePage(uintptr_t address) {
     // printk(LOG_DEBUG, "pmm buddy: Freeing page 0x%X\n", address);
 
     uintptr_t frame_addr = address / 0x1000;
@@ -86,4 +87,50 @@ int Kernel::PMM::buddy_freePage(uintptr_t address) {
         }
     }
     return 0;
+}
+
+uintptr_t Kernel::PMM::buddy_testPage(uintptr_t address) {
+    // TODO(Lionel07): Optimize this by utilizing the buddy cache layers.
+    uintptr_t *bitmap = buddy_startPage[0];
+
+    uintptr_t frame_addr = address / 0x1000;
+    uintptr_t index = INDEX_FROM_BIT(frame_addr);
+    uintptr_t offset = OFFSET_FROM_BIT(frame_addr);
+    return (bitmap[index] & (0x1 << offset));
+}
+
+uintptr_t * Kernel::PMM::allocate(unsigned int pages) {
+    if (pages < 1) {
+        return 0;
+    }
+    uintptr_t potential_first = buddy_getFirstPage() * 0x1000;
+    for (unsigned int i = 0; i != pages; i++) {
+        if (buddy_testPage(potential_first + (0x1000 * i)) == 1) {
+            potential_first = (potential_first + (0x1000 * i));
+        }
+    }
+
+    // It passes, keep potential first and return it after setting used bits.
+    for (unsigned int i = 0; i != pages; i++) {
+        buddy_allocatePage(potential_first + (0x1000 * i));
+    }
+    return (uintptr_t*)potential_first;
+}
+uintptr_t Kernel::PMM::buddy_getFirstPage() {
+    uintptr_t i, j;
+
+    // TODO(Lionel07): Optimize this by utilizing the buddy cache layers.
+    uintptr_t *bitmap = buddy_startPage[0];
+
+    for (i = 0; i < INDEX_FROM_BIT(kernel_totalPages); i++) {
+        if (bitmap[i] != 0xFFFFFFFF) {
+            for (j = 0; j < 32; j++) {
+                uintptr_t testFrame = 0x1 << j;
+                if (!(bitmap[i] & testFrame)) {
+                    return i * 0x20 + j;
+                }
+            }
+        }
+    }
+    return -1;
 }

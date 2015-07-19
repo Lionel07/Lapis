@@ -9,18 +9,21 @@
 namespace Kernel {
     class PMM {
     public:
-        static uintptr_t memsize;
-        static uintptr_t buddy_usedPages;
+        static uintptr_t   memsize;
+        static uintptr_t   buddy_usedPages;
         static uintptr_t * buddy_startPage[BUDDY_BITMAPS];
-        static uintptr_t kernel_allocatedPages;
-        static uintptr_t kernel_uncommitedAllocatedPages;
+        static uintptr_t   kernel_allocatedPages;
+        static uintptr_t   kernel_totalPages;
+        static uintptr_t   kernel_uncommitedAllocatedPages;
     public:
-        static void refreshCache();
-        static void init();
-        static int allocate(int pages);
-        static int buddy_allocatePage(uintptr_t address);
-        static int buddy_freePage(uintptr_t address);
-        static int free(uintptr_t * address);
+        static void        refreshCache();
+        static void        init();
+        static uintptr_t * allocate(unsigned int pages);
+        static uintptr_t   buddy_allocatePage(uintptr_t address);
+        static uintptr_t   buddy_freePage(uintptr_t address);
+        static uintptr_t   buddy_testPage(uintptr_t address);
+        static uintptr_t   buddy_getFirstPage();
+        static uintptr_t   free(uintptr_t * address);
     };
 };
 
