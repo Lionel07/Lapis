@@ -87,7 +87,7 @@ uintptr_t Kernel::PMM::buddy_freePage(uintptr_t address) {
     uintptr_t *bitmap = buddy_startPage[0];
     bitmap[index] &= ~(0x1 << offset);
     // Update higher bitmaps by setting the bits to ON
-    for (int i = 0; i!= BUDDY_BITMAPS; i++) {
+    for (int i = 0; i!= PMM_BUDDY_BITMAPS; i++) {
         break;  // TODO(Lionel07): Fix this.
         if (bitmap[index] == (uintptr_t)-1) {
         }

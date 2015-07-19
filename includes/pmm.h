@@ -8,13 +8,13 @@ namespace Kernel {
     public:
         static uintptr_t memsize;
         static uintptr_t buddy_usedPages;
+        static uintptr_t kernel_totalPages;
         static uintptr_t * buddy_startPage[PMM_BUDDY_BITMAPS];
         static uintptr_t kernel_allocatedPages;
         static uintptr_t kernel_uncommitedAllocatedPages;
     public:
         static void        refreshCache();
         static void        debugPrintStatistics();
-        static void        refreshCache();
         static void        init();
         static uintptr_t * allocate(unsigned int pages);
         static uintptr_t   buddy_allocatePage(uintptr_t address);
