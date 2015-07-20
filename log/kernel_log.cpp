@@ -64,17 +64,17 @@ void printk(const signed int severity, const char *fmt, ...) {
 	va_start(argp, fmt);
 	for(p = fmt; *p != '\0'; p++) {
 		if(*p != '%') {
-			TextConsole::Printc(*p,0);
+			TextConsole::Printc(*p,CONSOLE_DEFAULT_COLOR);
 			continue;
 		}
 		switch(*++p) {
 			case 'c':
 				i = va_arg(argp, int);
-				TextConsole::Printc(i,0);
+				TextConsole::Printc(i,CONSOLE_DEFAULT_COLOR);
 				break;
 			case 's':
 				s = va_arg(argp, char *);
-				TextConsole::Print((char*)s);
+				TextConsole::PrintAttribute((char*)s, CONSOLE_STRING_COLOR);
 				break;
 			case 'x':
 			case 'X':
@@ -88,7 +88,7 @@ void printk(const signed int severity, const char *fmt, ...) {
 				TextConsole::PrintAttribute((char*)fmtbuf, 0x03);
 				break;
 			case '%':
-				TextConsole::Printc('%',0);
+				TextConsole::Printc('%',CONSOLE_DEFAULT_COLOR);
 				break;
 		}
 	}
