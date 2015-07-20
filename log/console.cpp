@@ -26,7 +26,7 @@ void TextConsole::Init() {
 	
 }
 
-void TextConsole::Printc(char c) {
+void TextConsole::Printc(char c,uint8_t attribute) {
 	switch(c) {
 		case 0x08:
 			if(term_x) {
@@ -50,6 +50,9 @@ void TextConsole::Printc(char c) {
 			break;
 		default:
 			FramebufferAddChar(c,term_x,term_y);
+			if(attribute != 0x0) {
+				FramebufferAddCharAttrib(attribute,term_x,term_y);
+			}
 			term_x++;
 			break;		
 	}
@@ -67,11 +70,18 @@ void TextConsole::Printc(char c) {
 void TextConsole::Print(const char *c) {
 	int i = 0;
 	while (c[i]) {
-		Printc(c[i++]);
+		Printc(c[i++], 0x0);
 	}
 	FramebufferFlush();
 }
 
+void TextConsole::PrintAttribute(const char *c,uint8_t attr) {
+	int i = 0;
+	while (c[i]) {
+		Printc(c[i++], attr);
+	}
+	FramebufferFlush();
+}
 void TextConsole::UpdateFramebuffer() {
 	FramebufferFlush();
 }

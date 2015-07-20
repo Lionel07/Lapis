@@ -9,8 +9,9 @@
 
 class TextConsole {
 	public:
-		static void Printc(char c);
+		static void Printc(char c,uint8_t attribute);
 		static void Print(const char *c);
+		static void PrintAttribute(const char *c, uint8_t attribute);
 		static void Init(); // WARN: Don't use global constructor. We need to have control
 		static void SetCursor(uint8_t x, uint8_t y);
 		static void UpdateScroll();

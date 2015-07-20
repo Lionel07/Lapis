@@ -64,13 +64,13 @@ void printk(const signed int severity, const char *fmt, ...) {
 	va_start(argp, fmt);
 	for(p = fmt; *p != '\0'; p++) {
 		if(*p != '%') {
-			TextConsole::Printc(*p);
+			TextConsole::Printc(*p,0);
 			continue;
 		}
 		switch(*++p) {
 			case 'c':
 				i = va_arg(argp, int);
-				TextConsole::Printc(i);
+				TextConsole::Printc(i,0);
 				break;
 			case 's':
 				s = va_arg(argp, char *);
@@ -80,15 +80,15 @@ void printk(const signed int severity, const char *fmt, ...) {
 			case 'X':
 				i = va_arg(argp, int);
 				s = itoh(i, fmtbuf);
-				TextConsole::Print((char*)s);
+				TextConsole::PrintAttribute((char*)s,0x0E);
 				break;
 			case 'd':
 				i = va_arg(argp, int);
 				itoa((int)i, fmtbuf, 10);
-				TextConsole::Print((char*)fmtbuf);
+				TextConsole::PrintAttribute((char*)fmtbuf, 0x03);
 				break;
 			case '%':
-				TextConsole::Printc('%');
+				TextConsole::Printc('%',0);
 				break;
 		}
 	}
