@@ -30,7 +30,7 @@ void Kernel::PMM::init() {
     uintptr_t * buddyAllocatorPointer = (uintptr_t*) start_of_allocatable_space;
 
     for (int i = 0; i != PMM_BUDDY_BITMAPS; i++) {
-        int needed_size = memsize / ipow(2, PMM_BUDDY_STARTSIZE + i);
+        uintptr_t needed_size = memsize / ipow(2, PMM_BUDDY_STARTSIZE + i);
         if ((needed_size & 0xFFFFF000) != needed_size) {
             needed_size &= 0xFFFFF000;
             needed_size += 0x1000;
