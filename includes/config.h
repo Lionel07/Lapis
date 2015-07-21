@@ -12,7 +12,6 @@
 #define PMM_PRINTDEBUGSTATEMENTS true
 
 #define NO_VERSION_WARNING
-
 // RULES
 
 #ifdef ARCHarm

@@ -8,13 +8,13 @@ KERNEL_OUTPUT 	:= lapis
 
 .PHONY: clean clean-sysroot
 
-DEBUGFG := -g -DDRAW_SIMPLE_TAGS
+DEBUGFG := -g
 AS		:= nasm -felf32# NASM or YASM is required for x86
 GAS		:= as
 CC		:= gcc
 CPP		:= g++
-CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -O2 ${DEBUGFG} -lgcc
-CPFLAGS := -ffreestanding -nostartfiles -fno-rtti -fno-exceptions -Wall -Wextra -DBUILD_${ARCH} -O2 ${DEBUGFG} -lgcc
+CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -DARCH${ARCH} -O2 ${DEBUGFG} -lgcc
+CPFLAGS := -ffreestanding -nostartfiles -fno-rtti -fno-exceptions -Wall -Wextra -DARCH${ARCH} -O2 ${DEBUGFG} -lgcc
 LD		:= ${CPP}
 LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -O2 ${DEBUGFG}
 

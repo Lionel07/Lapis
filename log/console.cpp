@@ -7,6 +7,10 @@
 //#include <stdio.h>
 //#include <string.h>
 
+#ifdef ARCHarm
+#undef USING_CONSOLE_FB
+#endif 
+
 void TextConsole_Shim_WriteChar(uint8_t c,int x, int y);
 
 #ifdef USING_CONSOLE_FB
@@ -100,6 +104,10 @@ void TextConsole::FramebufferAddCharAttrib(uint8_t c, uint8_t x, uint8_t y) {
 	#ifdef USING_CONSOLE_FB
 	text_console_fb[(((y * CONFIG_TEXTCONSOLE_FB_MX) + x) * 2) + 1] = c;
 	term_fb_flag_modified = 1;
+	#else
+	c = c;
+	x = x;
+	y = y;
 	#endif
 }
 
