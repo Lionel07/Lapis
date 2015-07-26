@@ -25,7 +25,7 @@ void Kernel::PMM::init() {
 
     memsize = 0xF000000;    // TODO(Lionel07): Get memsize here.
     buddy_usedPages = 0;
-    kernel_totalPages = memsize / 4;
+    kernel_totalPages = memsize / 0x1000;
     uintptr_t start_of_allocatable_space = 0x1000000;
     uintptr_t * buddyAllocatorPointer = (uintptr_t*) start_of_allocatable_space;
 
@@ -48,8 +48,10 @@ void Kernel::PMM::init() {
             //printk(LOG_INFO, "pmm: @0x%X\n", (uintptr_t)buddy_startPage[i]);
         }
     }
+
     printk(LOG_INFO, "pmm: Requires 0x%X pages for bookkeeping\n", buddy_usedPages);
     kernel_uncommitedAllocatedPages += buddy_usedPages;
+
     // Allocate pages here
     for (uintptr_t i = 0; i < start_of_allocatable_space; i+=0x1000) {
         buddy_allocatePage(i);
