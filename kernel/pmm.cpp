@@ -2,7 +2,7 @@
 #include <log/printk.h>
 #include <string.h>
 #include <config.h>
-
+#include <memory.h>
 /// Should we print debug statements?
 
 /// Page index from address
@@ -19,6 +19,9 @@ uintptr_t * Kernel::PMM::buddy_startPage[PMM_BUDDY_BITMAPS];
 uintptr_t   Kernel::PMM::kernel_allocatedPages;
 uintptr_t   Kernel::PMM::kernel_uncommitedAllocatedPages;
 uintptr_t   Kernel::PMM::kernel_totalPages;
+uintptr_t   Kernel::PMM::kernel_usedSectionSlots = 0;
+
+memory_section_t * Kernel::PMM::section_slots[MEMORY_SECTION_SLOTS];
 
 void Kernel::PMM::init() {
     printk(LOG_INFO, "pmm: Initialsing Physical Memory Manager...\n");
@@ -141,4 +144,12 @@ uintptr_t Kernel::PMM::buddy_getFirstPage() {
         }
     }
     return -1;
+}
+
+void Kernel::PMM::register_memoryRegion(memory_section_t * mem) {
+    section_slots[kernel_usedSectionSlots] = mem;
+    kernel_usedSectionSlots++;
+    if(PMM_PRINTDEBUGSTATEMENTS) {
+        printk(LOG_INFO,"pmm region: [%s] type %d, 0x%X -> 0x%X; ro %d; vmm mapped %d\n","new",mem->type,mem->start_address,mem->end_address,mem->read_only,mem->vmm_mapped);
+    }
 }
