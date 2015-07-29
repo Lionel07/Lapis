@@ -23,13 +23,19 @@ uintptr_t   Kernel::PMM::kernel_usedSectionSlots = 0;
 
 memory_section_t * Kernel::PMM::section_slots[MEMORY_SECTION_SLOTS];
 
+extern "C" uintptr_t kernel_end;
+
 void Kernel::PMM::init() {
     printk(LOG_INFO, "pmm: Initialsing Physical Memory Manager...\n");
 
     memsize = 0xF000000;    // TODO(Lionel07): Get memsize here.
     buddy_usedPages = 0;
     kernel_totalPages = memsize / 0x1000;
-    uintptr_t start_of_allocatable_space = 0x1000000;
+    uintptr_t start_of_allocatable_space = (uintptr_t)&kernel_end;
+    if ((start_of_allocatable_space & 0xFFFFF000) != start_of_allocatable_space) {
+        start_of_allocatable_space &= 0xFFFFF000;
+        start_of_allocatable_space += 0x1000;
+    }
     uintptr_t * buddyAllocatorPointer = (uintptr_t*) start_of_allocatable_space;
 
     for (int i = 0; i != PMM_BUDDY_BITMAPS; i++) {
