@@ -2,6 +2,7 @@
 #include <log/printk.h>
 #include <string.h>
 #include <config.h>
+#include <panic.h>
 #include <memory.h>
 /// Should we print debug statements?
 
@@ -14,12 +15,15 @@
 int ipow(int base, int exp);
 
 uintptr_t   Kernel::PMM::memsize;
+uintptr_t   Kernel::PMM::topAllocatedAddress;
 uintptr_t   Kernel::PMM::buddy_usedPages;
 uintptr_t * Kernel::PMM::buddy_startPage[PMM_BUDDY_BITMAPS];
 uintptr_t   Kernel::PMM::kernel_allocatedPages;
 uintptr_t   Kernel::PMM::kernel_uncommitedAllocatedPages;
 uintptr_t   Kernel::PMM::kernel_totalPages;
 uintptr_t   Kernel::PMM::kernel_usedSectionSlots = 0;
+
+uintptr_t start_of_allocatable_space;
 
 memory_section_t * Kernel::PMM::section_slots[MEMORY_SECTION_SLOTS];
 
@@ -31,13 +35,12 @@ void Kernel::PMM::init() {
     memsize = 0xF000000;    // TODO(Lionel07): Get memsize here.
     buddy_usedPages = 0;
     kernel_totalPages = memsize / 0x1000;
-    uintptr_t start_of_allocatable_space = (uintptr_t)&kernel_end;
+    start_of_allocatable_space = (uintptr_t)&kernel_end;
     if ((start_of_allocatable_space & 0xFFFFF000) != start_of_allocatable_space) {
         start_of_allocatable_space &= 0xFFFFF000;
         start_of_allocatable_space += 0x1000;
     }
     uintptr_t * buddyAllocatorPointer = (uintptr_t*) start_of_allocatable_space;
-
     for (int i = 0; i != PMM_BUDDY_BITMAPS; i++) {
         uintptr_t needed_size = memsize / ipow(2, PMM_BUDDY_STARTSIZE + i);
         if ((needed_size & 0xFFFFF000) != needed_size) {
@@ -57,21 +60,25 @@ void Kernel::PMM::init() {
             //printk(LOG_INFO, "pmm: @0x%X\n", (uintptr_t)buddy_startPage[i]);
         }
     }
-
     printk(LOG_INFO, "pmm: Requires 0x%X pages for bookkeeping\n", buddy_usedPages);
     kernel_uncommitedAllocatedPages += buddy_usedPages;
 
-    // Allocate pages here
-    for (uintptr_t i = 0; i < start_of_allocatable_space; i+=0x1000) {
+    for (uintptr_t i = 0; i < (uintptr_t)buddyAllocatorPointer; i+=0x1000) {
         buddy_allocatePage(i);
     }
+    topAllocatedAddress = (uint32_t)buddyAllocatorPointer;
 }
 void Kernel::PMM::debugPrintStatistics() {
      printk(LOG_DEBUG, "pmm stat: memsize 0x%X, alloc. pages 0x%X, uncommited 0x%X\n", memsize,kernel_allocatedPages,kernel_uncommitedAllocatedPages);
      printk(LOG_DEBUG, "pmm stat: buddy pages [0]0x%X, [1]0x%X, ..., total %d\n", buddy_startPage[0],buddy_startPage[1], PMM_BUDDY_BITMAPS);
 }
+
+uintptr_t Kernel::PMM::recalculateTopAllocatedAddress()
+{
+    return topAllocatedAddress + (kernel_allocatedPages * 0x1000);
+}
 uintptr_t Kernel::PMM::buddy_allocatePage(uintptr_t address) {
-    // printk(LOG_DEBUG, "pmm buddy: Allocating page 0x%X\n", address);
+    //printk(LOG_DEBUG, "pmm buddy: Allocating page 0x%X\n", address);
 
     uintptr_t frame_addr = address / 0x1000;
     uintptr_t index = INDEX_FROM_BIT(frame_addr);
@@ -85,7 +92,7 @@ uintptr_t Kernel::PMM::buddy_allocatePage(uintptr_t address) {
         if (bitmap[index] == (uintptr_t)-1) {
         }
     }
-    kernel_allocatedPages++;
+    //kernel_allocatedPages++;
     return 0;
 }
 uintptr_t Kernel::PMM::buddy_freePage(uintptr_t address) {
@@ -130,9 +137,11 @@ uintptr_t * Kernel::PMM::allocate(unsigned int pages) {
     // It passes, keep potential first and return it after setting used bits.
     for (unsigned int i = 0; i != pages; i++) {
         buddy_allocatePage(potential_first + (0x1000 * i));
+        kernel_allocatedPages++;
     }
     return (uintptr_t*)potential_first;
 }
+
 uintptr_t Kernel::PMM::buddy_getFirstPage() {
     uintptr_t i, j;
 
@@ -149,7 +158,16 @@ uintptr_t Kernel::PMM::buddy_getFirstPage() {
             }
         }
     }
+    //printk(LOG_INFO, "No free pages!\n");
+    panic("pmm buddy: No free pages!\n");
     return -1;
+}
+
+uintptr_t * Kernel::PMM::allocateSinglePage() {
+    uintptr_t page = buddy_getFirstPage() * 0x1000;
+    buddy_allocatePage(page);
+    kernel_allocatedPages++;
+    return (uintptr_t*)page;
 }
 
 void Kernel::PMM::register_memoryRegion(memory_section_t * mem) {

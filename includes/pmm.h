@@ -8,6 +8,7 @@ namespace Kernel {
     class PMM {
     public:
         static uintptr_t memsize;
+        static uintptr_t topAllocatedAddress;
         static uintptr_t buddy_usedPages;
         static uintptr_t kernel_totalPages;
         static uintptr_t * buddy_startPage[PMM_BUDDY_BITMAPS];
@@ -17,10 +18,12 @@ namespace Kernel {
         static memory_section_t * section_slots[MEMORY_SECTION_SLOTS];
     public:
         static void        refreshCache();
+        static uintptr_t   recalculateTopAllocatedAddress();
         static void        debugPrintStatistics();
         static void        init();
         static uintptr_t * allocate(unsigned int pages);
         static uintptr_t   buddy_allocatePage(uintptr_t address);
+        static uintptr_t * allocateSinglePage();
         static uintptr_t   buddy_freePage(uintptr_t address);
         static uintptr_t   buddy_testPage(uintptr_t address);
         static uintptr_t   buddy_getFirstPage();

@@ -16,7 +16,7 @@ CPP		:= g++
 CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -DARCH${ARCH} -O2 ${DEBUGFG} -lgcc
 CPFLAGS := -ffreestanding -nostartfiles -fno-rtti -fno-exceptions -Wall -Wextra -DARCH${ARCH} -O2 ${DEBUGFG} -lgcc
 LD		:= ${CPP}
-LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -O2 ${DEBUGFG}
+LD_FLAGS:= -ffreestanding -nostdlib -lgcc -Wall -Wextra -O2 ${DEBUGFG} -lgcc
 
 GENISO 	:= genisoimage
 GENISOF	:= -R -b boot/grub/stage2_eltorito -quiet -no-emul-boot -boot-load-size 4 -boot-info-table
@@ -65,7 +65,6 @@ clean:
 sysroot:
 	@-mkdir sysroot 2>/dev/null
 clean-sysroot: sysroot
-	
 	-@rm -r sysroot/*
 
 sysroot-base:

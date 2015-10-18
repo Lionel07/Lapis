@@ -5,7 +5,7 @@
 #include <arch/x86/ports.h>
 #include <arch/x86/irq.h>
 #include <log/printk.h>
-
+#include <panic.h>
 const char *exception_messages[] =
 {
 	"Division By Zero",
@@ -61,6 +61,7 @@ extern "C" void fault_handler(struct regs *r)
 			printk(LOG_CRIT,"eax: 0x%x ebx: 0x%x ecx: 0x%x edx: 0x%x\n",r->eax,r->ebx,r->ecx,r->edx);
 			printk(LOG_CRIT,"esi: 0x%x edi: 0x%x eip: 0x%x eflags: 0x%x \n",r->esi,r->edi,r->eip,r->eflags);
 			printk(LOG_CRIT,"========== Ended Kernel Fault Handler ========\n");
+			panic("Fault!");
 			return;
 	}
 	if(r->int_no < 32)
@@ -72,6 +73,7 @@ extern "C" void fault_handler(struct regs *r)
 		printk(LOG_CRIT,"eax: 0x%x ebx:0x%x ecx:0x%x edx:0x%x\n",r->eax,r->ebx,r->ecx,r->edx);
 		printk(LOG_CRIT,"esi: 0x%x edi:0x%x eip:0x%x eflags:0x%x\n",r->esi,r->edi,r->eip,r->eflags);
 		printk(LOG_CRIT,"========== Ended Kernel Fault Handler ========\n");
+		panic("Fault!");
 	}
 }
 

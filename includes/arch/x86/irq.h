@@ -81,4 +81,6 @@ typedef struct regs
 typedef void (*interrupt_handler_t)(registers_t *); 
 
 
+void register_interrupt_handler (uint8_t n, interrupt_handler_t h);
+void deregister_interrupt_handler (uint8_t n);
 #endif
