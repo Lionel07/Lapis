@@ -14,9 +14,15 @@ typedef union vmm_page_addr {
 typedef struct vmm_page
 {
 	vmm_page_address_t address;
+	vmm_page_address_t phys_address;
 	uint8_t flags;
 } vmm_page_t;
 
+#define VMM_FLAG_ALLOCATED  0
+#define VMM_FLAG_RW 		1
+#define VMM_FLAG_PRESENT 	2
+#define VMM_FLAG_KERNEL 	3
+#define VMM_FLAG_DIRTY 		4	// For CoW
 
 namespace Kernel {
     class VMM {
@@ -40,7 +46,7 @@ namespace Kernel {
         static void unmapPage(uintptr_t *phys, uintptr_t *virt, vmm_page_t page);
         static vmm_page_t addressToVmmPage(uintptr_t page);
         static uintptr_t VmmPageToAddress(vmm_page_t page);
-        static inline bool VmmPageFlagEnabled(vmm_page_t page, uint8_t flag);
+        static void printVmmPage(vmm_page_t page);
         static void flushPage(vmm_page_t page);
     };
 };

@@ -7,7 +7,7 @@
 #include <panic.h>
 #include <arch/x86/idt.h>
 #include <arch/x86/irq.h>
-
+#include <bits.h>
 // x86 bits of VMM
 
 uintptr_t * page_directory;
@@ -20,6 +20,8 @@ void Kernel::VMM::arch_init()
     // Idealy, we should identity map where the kernel is.
 
     // Page directory is only 1kb, so we can just grab a free page.
+
+    memset(page_tables_addr,0,0x1000);
 
     page_directory = Kernel::PMM::allocateSinglePage();
     memset(page_directory,0,0x1000);
@@ -39,7 +41,7 @@ void Kernel::VMM::arch_init()
     for(int i = 0; i < 1024; i++)
     {
     	uintptr_t * table = page_tables_addr[0];
-    	table[i] = (i * 0x1000) | 3; // Set TAG_SUPERVISOR, TAG_RW, and TAG_PRESENT
+    	table[i] = (i * 0x1000) | 3; // Set VMM_FLAG_KERNEL, VMM_FLAG_RW, and VMM_FLAG_PRESENT
     }
 
     // Now we need to enable paging manually.
@@ -98,16 +100,34 @@ void Kernel::VMM::arch_identityMap(uintptr_t start, uintptr_t end)
 
 void Kernel::VMM::arch_allocatePage(vmm_page_t page)
 {
+	//We've been given a page, now we need to decode it
+
+	uintptr_t address = page.address.x86_page;
+
+	if(CHECK_BIT(page.flags,VMM_FLAG_ALLOCATED) || CHECK_BIT(page.flags,VMM_FLAG_PRESENT))
+	{
+		printk(LOG_ERR, "vmm alloc: Attempted to re-allocate page 0x%X (mapped at 0x%X)\n",
+			page.address.x86_page,page.phys_address.x86_page);
+		return;
+	}
 
 }
 
 vmm_page_t Kernel::VMM::addressToVmmPage(uintptr_t page)
 {
 	vmm_page_t a;
+	//memset(&a, 0, sizeof(vmm_page_t));
 	a.address.x86_page = page;
 
 	// Get info.
-	
+	uintptr_t address_index = page / 0x1000;
+	uintptr_t table_index = address_index / 1024;
+	// Now every frame can be addressed as [table_index:address]
+
+	if(page_tables_addr[table_index] == 0)
+	{
+
+	}
 
 	return a;
 }
