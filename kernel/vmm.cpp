@@ -10,6 +10,9 @@ void Kernel::VMM::init()
     Kernel::VMM::arch_init();
     printk(LOG_INFO, "vmm: Arch init finished.\n");
     // Idealy, we should identity map where the kernel is.
+
+    
+
 }
 
 void Kernel::VMM::allocatePage(vmm_page_t page)

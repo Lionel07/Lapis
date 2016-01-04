@@ -13,6 +13,7 @@ AS		:= nasm -felf32# NASM or YASM is required for x86
 GAS		:= as
 CC		:= gcc
 CPP		:= g++
+CPP_EXTRA := 
 CFLAGS	:= -ffreestanding -std=gnu99 -nostartfiles -Wall -Wextra -DARCH${ARCH} -O2 ${DEBUGFG} -lgcc
 CPFLAGS := -ffreestanding -nostartfiles -fno-rtti -fno-exceptions -Wall -Wextra -DARCH${ARCH} -O2 ${DEBUGFG} -lgcc
 LD		:= ${CPP}
@@ -50,7 +51,7 @@ all: lapis geniso
 
 %.o: %.cpp
 	@echo "CPP " $@
-	@${CPP} -c ${CPFLAGS} -I includes  -o $@ $<
+	@${CPP} ${CPP_EXTRA} -c ${CPFLAGS} -I includes -DBOARD_NAME=\"${BOARD}\" -o $@ $<
 
 
 lapis: ${FILES_COMPILE}
