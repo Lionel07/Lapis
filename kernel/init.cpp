@@ -3,7 +3,7 @@
 #include <vmm.h>
 #include <panic.h>
 int kmain(/*KernelInfo * k*/) {
-
+	
 	init_static_memregions();
 	Kernel::PMM::init();
 	Kernel::VMM::init();
