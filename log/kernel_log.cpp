@@ -6,12 +6,14 @@
 
 const signed int kernel_log_severityMask = -1; // -1 = nomask
 const signed int kernel_log_defaultSeverity = LOG_INFO;
-signed int kernel_log_lastMask;
+	  signed int kernel_log_lastMask;
 
 extern volatile uint8_t term_x;
 extern volatile uint8_t term_y;
+
 char* itoh(int i, char *buf);
 int itoa(int value, char *sp, int radix);
+void driver_serial_putc(char c);
 
 void printk(const signed int severity, const char *fmt, ...) {
 	if(severity < kernel_log_severityMask) {
@@ -50,6 +52,45 @@ void printk(const signed int severity, const char *fmt, ...) {
 		TextConsole::FramebufferAddChar(']',79,term_y);
 		term_y++;
 		term_x = 0;
+
+		#if ARCHx86
+		    driver_serial_putc(0x1B);
+		    driver_serial_putc('[');
+		    driver_serial_putc('9');
+		    driver_serial_putc('9');
+		    driver_serial_putc('9');
+	    	driver_serial_putc('C');
+	    	driver_serial_putc(0x1B);
+		    driver_serial_putc('[');
+		    driver_serial_putc('0');
+		    driver_serial_putc('0'+len+1);
+	    	driver_serial_putc('D');
+
+			driver_serial_putc(0x1B);
+			driver_serial_putc('[');
+		    driver_serial_putc('3');
+		    driver_serial_putc('0'+attribute % 8);
+		    driver_serial_putc('m');
+				    
+			driver_serial_putc('[');
+	    	for(size_t i = 0; i < len; i++) {
+				driver_serial_putc(fmt[i]);
+			}
+			driver_serial_putc(']');
+
+			driver_serial_putc(0x1B);
+		    driver_serial_putc('[');
+		    driver_serial_putc('9');
+		    driver_serial_putc('9');
+		    driver_serial_putc('9');
+	    	driver_serial_putc('D');
+
+	    	driver_serial_putc(0x1B);
+		    driver_serial_putc('[');
+		    driver_serial_putc('1');
+	    	driver_serial_putc('B');
+		#endif
+
 		#else
 		printk(kernel_log_lastMask," [");
 		printk(kernel_log_lastMask,fmt);

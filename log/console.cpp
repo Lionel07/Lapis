@@ -7,10 +7,6 @@
 //#include <stdio.h>
 //#include <string.h>
 
-#ifdef ARCHarm
-#undef USING_CONSOLE_FB
-#endif 
-
 void TextConsole_Shim_WriteChar(uint8_t c,int x, int y);
 void driver_serial_putc(char c);
 #ifdef USING_CONSOLE_FB

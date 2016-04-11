@@ -14,6 +14,7 @@ void driver_serial_init() {
     driver_serial_setup = true;
 
     // Send terminal commands to clear screen.
+    #ifdef SERIAL_CLEAR
     driver_serial_putc(0x1B);
     driver_serial_putc('[');
     driver_serial_putc('0');
@@ -26,6 +27,7 @@ void driver_serial_init() {
     driver_serial_putc(';');
     driver_serial_putc('1');
     driver_serial_putc('H');
+    #endif
 }
 
 void driver_serial_putc(char c)
@@ -38,4 +40,3 @@ void driver_serial_putc(char c)
     while ((inb(COM1 + 5) & 0x20) == 0);
     outb(COM1,c);
 }
-
