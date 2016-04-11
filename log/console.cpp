@@ -12,7 +12,7 @@
 #endif 
 
 void TextConsole_Shim_WriteChar(uint8_t c,int x, int y);
-
+void driver_serial_putc(char c);
 #ifdef USING_CONSOLE_FB
 uint8_t text_console_fb[CONFIG_TEXTCONSOLE_FB_MX * CONFIG_TEXTCONSOLE_FB_MY * CONFIG_TEXTCONSOLE_FB_SCREENS * 2]; // Stores attribute byte as well on x86.
 #endif
@@ -56,11 +56,20 @@ void TextConsole::Printc(char c,uint8_t attribute) {
 			FramebufferAddChar(c,term_x,term_y);
 			if(attribute != 0x0) {
 				FramebufferAddCharAttrib(attribute,term_x,term_y);
+					#ifdef ARCHx86
+					driver_serial_putc(0x1B);
+					driver_serial_putc('[');
+				    driver_serial_putc('3');
+				    driver_serial_putc('0'+attribute % 8);
+				    driver_serial_putc('m');
+					#endif
 			}
 			term_x++;
 			break;		
 	}
-	
+	#ifdef ARCHx86
+	driver_serial_putc(c);
+	#endif
 	if (term_x >= CONFIG_TEXTCONSOLE_FB_MX) {
 		term_x = 0;
 		term_y++;

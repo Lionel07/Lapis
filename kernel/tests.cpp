@@ -5,7 +5,7 @@ void mutex_test()
     mutex_t test_a;
     mutex_t test_b;
 
-    printk(LOG_DEBUG,"----------------------------------MUTEX TEST------------------------------------");
+    printk(LOG_DEBUG," ----------------------------------MUTEX TEST-----------------------------------\n");
 
     if(mutex_acquire(&test_a))
     {

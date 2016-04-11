@@ -10,7 +10,6 @@ signed int kernel_log_lastMask;
 
 extern volatile uint8_t term_x;
 extern volatile uint8_t term_y;
-
 char* itoh(int i, char *buf);
 int itoa(int value, char *sp, int radix);
 
@@ -61,16 +60,35 @@ void printk(const signed int severity, const char *fmt, ...) {
 		return;
 	}
 
+	uint8_t attribute = CONSOLE_DEFAULT_COLOR;
+
+ 	if(severity == LOG_ERR || severity ==  LOG_CRIT
+ 	   || severity ==  LOG_ALERT || severity ==  LOG_PANIC)
+ 	{
+ 		attribute = 0x04;
+ 	}
+ 	if(severity == LOG_DEBUG)
+ 	{
+ 		attribute = 0x07;
+ 	}
+ 	if(severity == LOG_INFO)
+ 	{
+ 		attribute = 0x0F;
+ 	}
+ 	if(severity == LOG_WARN)
+ 	{
+ 		attribute = 0x0E;
+ 	}
 	va_start(argp, fmt);
 	for(p = fmt; *p != '\0'; p++) {
 		if(*p != '%') {
-			TextConsole::Printc(*p,CONSOLE_DEFAULT_COLOR);
+			TextConsole::Printc(*p,attribute);
 			continue;
 		}
 		switch(*++p) {
 			case 'c':
 				i = va_arg(argp, int);
-				TextConsole::Printc(i,CONSOLE_DEFAULT_COLOR);
+				TextConsole::Printc(i,attribute);
 				break;
 			case 's':
 				s = va_arg(argp, char *);
@@ -88,7 +106,7 @@ void printk(const signed int severity, const char *fmt, ...) {
 				TextConsole::PrintAttribute((char*)fmtbuf, 0x03);
 				break;
 			case '%':
-				TextConsole::Printc('%',CONSOLE_DEFAULT_COLOR);
+				TextConsole::Printc('%',attribute);
 				break;
 		}
 	}

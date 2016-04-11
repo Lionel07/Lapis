@@ -10,6 +10,7 @@ int kmain(/*KernelInfo * k*/) {
 	Kernel::VMM::init();
 	printk(LOG_INFO,"kernel: Finished Init!\n");
 	mutex_test();
+	panic("try me");
 	for(;;) {
 		
 	}

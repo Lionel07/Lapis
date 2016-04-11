@@ -30,7 +30,7 @@ FILES_KERNEL	:= $(patsubst %.cpp,%.o,$(wildcard kernel/*.cpp))
 FILES_INIT  	:= $(patsubst %.cpp,%.o,$(wildcard init/*.cpp))
 FILES_LIB   	:= $(patsubst %.cpp,%.o,$(wildcard lib/*.cpp))
 FILES_LOG   	:= $(patsubst %.cpp,%.o,$(wildcard log/*.cpp))
-FILES_DRIVERS	:= $(patsubst %.cpp,%.o,$(wildcard drivers/*.cpp))
+FILES_DRIVERS	:= $(patsubst %.cpp,%.o,$(wildcard drivers/${ARCH}/*.cpp))
 
 FILES_ARCH  	:= $(patsubst %.cpp,%.o,$(wildcard arch/${ARCH}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/*.s))
 FILES_BOARD 	:= $(patsubst %.cpp,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.cpp)) $(patsubst %.s,%.o,$(wildcard arch/${ARCH}/${BOARD}/*.s))

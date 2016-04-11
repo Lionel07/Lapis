@@ -9,7 +9,7 @@
     Operations:
     * Lock: bool mutex_acquire(mutex_t * mutex);
     * Unlock: void mutex_release(mutex_t * mutex);
-    * Spin until aquired: void mutex_acquire_spin(mutex_t * mutex);
+    * Spin until acquired: void mutex_acquire_spin(mutex_t * mutex);
 
     Each one of these has an atomic version, prefixed by _atomic.
 */
@@ -18,7 +18,7 @@
 #include <mutex.h>
 #include <log/printk.h>
 
-// #define MUTEX_ALWAYS_ATOMIC
+//#define MUTEX_ALWAYS_ATOMIC
 #define MUTEX_DEBUG
 
 bool mutex_acquire(mutex_t * mutex)
@@ -39,6 +39,31 @@ bool mutex_acquire(mutex_t * mutex)
     #endif
     return false;
     #endif
+}   
+
+bool mutex_acquire_atomic(mutex_t * mutex)
+{
+    unsigned char res = 1;
+    #ifdef ARCHx86
+    asm volatile (
+        "mov %%eax, 1;"
+        "lock; cmpxchg %1, (%2)"                             
+        : "=r"(res)         
+        : "r"(res), "r"(mutex)
+        : "%1","memory");
+    #endif
+
+    #ifdef MUTEX_DEBUG
+    if(res)
+    {
+        printk(LOG_DEBUG,"mutex: SUCCEEDED to acquire 0x%x\n",mutex);
+    }
+    else
+    {
+        printk(LOG_DEBUG,"mutex: FAILED to acquire 0x%x\n",mutex);
+    }
+    #endif
+    return (bool)res;
 }
 
 void mutex_release(mutex_t * mutex)
@@ -51,18 +76,18 @@ void mutex_release(mutex_t * mutex)
 
 void mutex_acquire_spin(mutex_t * mutex)
 {
-    #ifdef MUTEX_ALWAYS_ATOMIC
-    mutex_acquire_spin(mutex);
-    return;
-    #else
-
     while(true)
     {
+        #ifndef MUTEX_ALWAYS_ATOMIC
         if(mutex_acquire(mutex) == true)
         {
             return;
         }
-
+        #else
+        if(mutex_acquire(mutex) == true)
+        {
+            return;
+        }
+        #endif
     }
-    #endif
 }

@@ -21,7 +21,7 @@ void ArchX86::GDT::SetGate(signed int num, uint32_t base, uint32_t limit, uint8_
 } 
 
 void ArchX86::GDT::Init() {
-	printk(LOG_INFO,"x86: Writing GDT to hardware... ");
+	printk(LOG_INFO,"x86: Writing GDT to hardware...\n");
 	arch_x86_gdtptr.limit = (sizeof(struct gdt_entry) * ARCH_X86_GDT_ENTRIES) - 1;
 	arch_x86_gdtptr.base  = (uint32_t)&arch_x86_gdt;
 	ArchX86::GDT::SetGate(0, 0, 0, 0, 0);                // Null segment
