@@ -53,42 +53,21 @@ void printk(const signed int severity, const char *fmt, ...) {
 		term_y++;
 		term_x = 0;
 
-		#if ARCHx86
-		    driver_serial_putc(0x1B);
-		    driver_serial_putc('[');
-		    driver_serial_putc('9');
-		    driver_serial_putc('9');
-		    driver_serial_putc('9');
-	    	driver_serial_putc('C');
-	    	driver_serial_putc(0x1B);
-		    driver_serial_putc('[');
-		    driver_serial_putc('0');
-		    driver_serial_putc('0'+len+1);
-	    	driver_serial_putc('D');
-
+		#ifdef ARCHx86
 			driver_serial_putc(0x1B);
 			driver_serial_putc('[');
 		    driver_serial_putc('3');
 		    driver_serial_putc('0'+attribute % 8);
 		    driver_serial_putc('m');
-				    
+			
+			driver_serial_putc(' ');
 			driver_serial_putc('[');
 	    	for(size_t i = 0; i < len; i++) {
 				driver_serial_putc(fmt[i]);
 			}
 			driver_serial_putc(']');
 
-			driver_serial_putc(0x1B);
-		    driver_serial_putc('[');
-		    driver_serial_putc('9');
-		    driver_serial_putc('9');
-		    driver_serial_putc('9');
-	    	driver_serial_putc('D');
-
-	    	driver_serial_putc(0x1B);
-		    driver_serial_putc('[');
-		    driver_serial_putc('1');
-	    	driver_serial_putc('B');
+			driver_serial_putc('\n');
 		#endif
 
 		#else
@@ -115,6 +94,10 @@ void printk(const signed int severity, const char *fmt, ...) {
  	if(severity == LOG_INFO)
  	{
  		attribute = 0x0F;
+ 	}
+ 	if(severity == LOG_NOTICE)
+ 	{
+ 		attribute = 0x0B;
  	}
  	if(severity == LOG_WARN)
  	{

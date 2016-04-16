@@ -12,7 +12,7 @@ struct idt_ptr   arch_x86_idtptr;
 ///Inits interrupt services
 void ArchX86::IDT::Init()
 {
-	printk(LOG_INFO,"x86: Writing IDT and interrupt handlers to hardware...\n");
+	printk(LOG_INFO,"x86: Writing IDT and interrupt handlers to hardware...");
 	
 	arch_x86_idtptr.limit = sizeof(struct idt_entry) * 256 -1;
    	arch_x86_idtptr.base  = (uint32_t)&arch_x86_idt;

@@ -7,7 +7,7 @@
 #include <arch/x86/paging.h>
 
 #include <pmm.h>
-
+void driver_serial_init();
 void kmain();
 
 #ifdef GRUB_BOOT
@@ -16,7 +16,9 @@ extern "C" void early_kernel_main(int magic, void* bootinfo)
 extern "C" void early_kernel_main()
 #endif
 {
+    driver_serial_init();
 	TextConsole::Init();
+    
 	Kernel::Version::printKernelVersion();
 	printk(LOG_NOTICE,"\n");
 	//Start to initialise the hardware
